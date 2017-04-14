@@ -1,5 +1,6 @@
 import java.util.Scanner;
-
+import java.util.TimeZone;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -12,7 +13,7 @@ public class Main {
 		
 		do
 		{
-			System.out.println("1=inserisci prodotto,2=elimina prodotto,3=stampainformazioni,0=Esci");
+			System.out.println("1=inserisci prodotto,2=eliminaprodotto,3=stampainformazioni,4=eliminaprodottiscaduti=0=Esci");
 			scelta= in.nextInt();
 			switch(scelta)
 			{
@@ -21,6 +22,8 @@ public class Main {
 				case 2: eliminaprodotto(in,supermercato);
 					break;
 				case 3: stampa(supermercato);
+					break;
+				case 4: eliminaprodottiscaduti(supermercato);
 					break;
 			}
 		}
@@ -52,25 +55,41 @@ public class Main {
 	
 		public static  void scadenza(Scanner in,String nome,Supermercato supermercato)
 		{		
-				int giorno=0,mese=0,anno=0,prezzo=0;	
-				GregorianCalendar calendario=new GregorianCalendar(anno,mese,giorno);
-				if(supermercato.scorriArrayList(nome,supermercato.getProdottiSal(),1)!=1)
+				int posizione=supermercato.scorriArrayList(nome,supermercato.getProdottiSal(),1);	
+				if(posizione==-1)
 				{		
-					System.out.println("prezzo");
-					prezzo = in.nextInt();					
-					System.out.println("inserisci giorno scadenza");
-					giorno= in.nextInt();
-					System.out.println("inserisci mese scadenza");
-					mese= in.nextInt();
-					System.out.println("inserisci anno scadenza");
-					anno= in.nextInt();
-					ProdottiSalumeria prodottoSal=new ProdottiSalumeria(nome,prezzo,calendario);
-					supermercato.setProdottiSal(prodottoSal);					
-				}									
+					creaoggettosal(in,nome,supermercato);
+										
+				}
+				else
+				{
+					System.out.println("Il prodotto esiste e ha scadenza "+supermercato.getProdottiSal().get(posizione).returnDate()+" incrementare o creare nuovo prodotto1)incr. other)nuovo");
+					int scelta = in.nextInt();	
+					if(scelta!=1)
+					{
+						supermercato.getProdottiSal().get(posizione).decrementa(1);
+						creaoggettosal(in,nome,supermercato);
+					}
+				}	
 							
 		}	
+		public static void creaoggettosal(Scanner in,String nome,Supermercato supermercato)
+		{	GregorianCalendar calendario;
+			int giorno=0,mese=0,anno=0,prezzo=0;
+			System.out.println("prezzo");
+			prezzo = in.nextInt();					
+			System.out.println("inserisci giorno scadenza");
+			giorno= in.nextInt();
+			System.out.println("inserisci mese scadenza");
+			mese= in.nextInt();
+			System.out.println("inserisci anno scadenza");
+			anno= in.nextInt();
+			calendario=new GregorianCalendar(anno,mese-1,giorno);
+			ProdottiSalumeria prodottoSal=new ProdottiSalumeria(nome,prezzo,calendario);
+			supermercato.setProdottiSal(prodottoSal);	
+		}
 		public static  void aggiungi(Scanner in,String nome,Supermercato supermercato)
-		{		if(supermercato.scorriArrayList(nome,supermercato.getProdottiCanc(),1)!=1){
+		{		if(supermercato.scorriArrayList(nome,supermercato.getProdottiCanc(),1)!=-1){
 					System.out.println("prezzo");
 					int prezzo = in.nextInt();
 					ProdottiCancelleria prodottoCanc=new ProdottiCancelleria(nome,prezzo);
@@ -93,7 +112,24 @@ public class Main {
 	        }
 			for(ProdottiSalumeria prodotto : supermercato.getProdottiSal()) {
 				System.out.println(prodotto.informazioni());
-	        }
+	        }			
+		}
+		public static void eliminaprodottiscaduti(Supermercato supermercato)
+		{
+			
+			GregorianCalendar c=new GregorianCalendar() ;
+			Date oggi=c.getTime();
+			for(int i=0;i<supermercato.getProdottiSal().size();i++)
+			{
+				Date scadenza= supermercato.getProdottiSal().get(i).getScadenza().getTime();
+				if(scadenza.compareTo(oggi)<0)
+				{
+					System.out.println("Il prodotto "+supermercato.getProdottiSal().get(i).getNome()+ " era scaduto ed è stato eliminato");
+					supermercato.getProdottiSal().remove(i);					
+				}
+					
+				
+			}
 			
 		}
 }

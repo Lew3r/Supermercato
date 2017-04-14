@@ -32,12 +32,12 @@ public void setProdottiCanc(ProdottiCancelleria prodottoCanc) {
 public void aggiungiprodotto(String nomeProdotto,List prodotti,int operazione)
 {	
 	int var=0;
-	if(var!=1)
+	if(var!=-1)
 	{	
 		var=scorriArrayList(nomeProdotto,prodottiSal,operazione); 
-		if(var!=1)
+		if(var!=-1)
 			scorriArrayList(nomeProdotto,prodottiCanc,operazione);
-		if(var!=1)
+		if(var!=-1)
 			System.out.println("prodotto non esistente");
 	}  
 
@@ -48,22 +48,21 @@ public void aggiungiprodotto(String nomeProdotto,List prodotti,int operazione)
 
 public void removeProd(String nomeProdotto,int operazione)
 {	int var=0;
-		if(var!=1)
+		if(var!=-1)
 		{	
 			var=scorriArrayList(nomeProdotto,prodottiSal,operazione); 
-			if(var!=1)
+			if(var!=-1)
 				var=scorriArrayList(nomeProdotto,prodottiCanc,operazione);
-			if(var!=1)
+			if(var!=-1)
 				System.out.println("prodotto non esistente");
 			
-		}
-			  
+		}			  
 }
 public int scorriArrayList(String nomeProdotto,List prodotti,int operazione)
 {	
 	Scanner in = new Scanner(System.in);
-	int trovato=0;
-	for(int i=0;i<prodotti.size()&&trovato==0;i++)		  
+	int trovato=-1;
+	for(int i=0;i<prodotti.size()&&trovato==-1;i++)		  
 	{
 	  if(nomeProdotto.equalsIgnoreCase(((Prodotti) prodotti.get(i)).getNome()))
 	  {
@@ -78,18 +77,18 @@ public int scorriArrayList(String nomeProdotto,List prodotti,int operazione)
 				  {
 				  case 0:	prodotti.remove(i);
 					  		System.out.println("Prodotto Rimosso");
-					  		trovato=1;
+					  		trovato=i;
 					  		break;
 				  default:	System.out.println("Prodotto decrementato");
-				  			trovato=1;
+				  			trovato=i;
 				  }			  
 			  }
 		  }
 		  else
-		  {
+		  {		
 			  ((Prodotti) prodotti.get(i)).incrementa();
-			  trovato=1;
-			  System.out.println("prodotto gia' esistente ed incrementato di una unità");
+			  trovato=i;
+			  
 		  }
 	  }
 	}
